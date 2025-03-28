@@ -43,3 +43,23 @@ inner join ordenes o on d.orden_id =  o.orden_id
 where o.total > 2 
 group by  p.nombre,o.total
 order by CANTIDAD ASC ;
+
+
+--![x]/ TRANSACCIONES 
+
+Implementa una transacción que registre una nueva orden de un cliente y actualice el stock de los productos. 
+Si el stock es insuficiente, revierte la transacción.
+
+
+start transaction 
+		insert into ordenes(cliente_id,fecha,total) values(1,'2025-03-27',14.2);
+		
+		update productos set  stock = stock - 1 where producto_id = 1;
+		
+		
+
+		if( select stock from productos where producto_id = 1) < 0 then 
+			rollback;	
+		else 
+	commit
+	 	end if
