@@ -17,6 +17,24 @@ order by m.precio ASC ;
 --![x]/ INNERS
 
 
+Obtener la lista de clientes y sus órdenes, mostrando el nombre del cliente y la fecha de la orden.
+
+select c.nombre as cliente, o.fecha as fecha_orden ,d.cantidad , d.precio from detalle_orden d
+inner join ordenes o on d.orden_id = o.orden_id
+inner join clientes c on o.cliente_id = c.cliente_id;
+
+ Listar los productos que han sido pedidos al menos una vez, mostrando su nombre y el número de veces que han sido vendidos.
+
+select p.nombre,p.precio,p.stock , c.nombre as cliente_que_compro, o.fecha , d.cantidad  from detalle_orden d
+inner join productos p on d.producto_id = p.producto_id
+inner join ordenes o on d.orden_id = o.orden_id
+inner join clientes c on o.cliente_id = c.cliente_id
+ where d.cantidad > 1 ;
+
+
+ Obtener la cantidad total vendida por cada producto, incluyendo aquellos que nunca han sido vendidos.
+
+
 // Muestra una lista con todos los productos vendidos, 
 incluyendo el nombre del cliente que los compró y la fecha de la compra.  
 
