@@ -63,3 +63,18 @@ start transaction
 		else 
 	commit
 	 	end if
+
+
+
+
+// Crea una transacción que revierta una compra (devuelve el dinero al cliente y repone el stock del producto).
+
+start transaction 
+		update  productos set stock = stock - 1 where producto_id = 1 and 
+		(select SUM(total)from ordenes where cliente_id = 1) > 0;
+	
+	  if ROW_COUNT() = 0 then 
+	  	rollback;
+	  else 
+	  	commit
+	 end if		
