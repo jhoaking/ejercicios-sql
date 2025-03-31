@@ -47,7 +47,7 @@ order by CANTIDAD ASC ;
 
 --![x]/ TRANSACCIONES 
 
-Implementa una transacción que registre una nueva orden de un cliente y actualice el stock de los productos. 
+//Implementa una transacción que registre una nueva orden de un cliente y actualice el stock de los productos. 
 Si el stock es insuficiente, revierte la transacción.
 
 
