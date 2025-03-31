@@ -34,6 +34,21 @@ inner join clientes c on o.cliente_id = c.cliente_id
 
  Obtener la cantidad total vendida por cada producto, incluyendo aquellos que nunca han sido vendidos.
 
+ select  p.nombre , p.precio, p.stock ,SUM(d.cantidad) as cantidad_total from detalle_orden d
+ inner join productos p on d.producto_id = p.producto_id
+ group by p.nombre,p.precio,p.stock
+ order by  cantidad_total desc ;
+
+
+Mostrar el cliente que más ha gastado en órdenes junto con el total gastado.
+ 
+select c.cliente_id , o.fecha , SUM(o.total) as total_gastado ,d.cantidad , p.nombre from ordenes o
+inner join clientes c on o.cliente_id = c.cliente_id
+inner join detalle_orden d on o.orden_id = d.orden_id
+inner join productos p on d.producto_id = p.producto_id
+group by c.cliente_id ,o.fecha, p.nombre, d.cantidad
+having SUM(o.total) > 2
+order by total_gastado  desc  ;
 
 // Muestra una lista con todos los productos vendidos, 
 incluyendo el nombre del cliente que los compró y la fecha de la compra.  
