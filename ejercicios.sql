@@ -50,6 +50,23 @@ group by c.cliente_id ,o.fecha, p.nombre, d.cantidad
 having SUM(o.total) > 2
 order by total_gastado  desc  ;
 
+ Obtener todas las órdenes junto con el nombre del cliente y la cantidad total de productos comprados en cada una.
+
+ 	select c.nombre,p.nombre, SUM(d.cantidad) as cantidad_total,o.fecha, d.precio  from detalle_orden d
+	inner join productos p on d.producto_id = p.producto_id
+	inner join ordenes o on d.orden_id = o.orden_id
+	inner join clientes c on o.cliente_id = c.cliente_id
+	group by  c.nombre,p.nombre,o.fecha, d.precio
+	order by cantidad_total desc ;
+
+
+Listar los productos que se han vendido en todas las órdenes (productos presentes en todas las órdenes registradas).
+
+	select p.nombre,c.cliente_id , o.fecha,o.total , p.stock, d.precio from detalle_orden d
+	inner join productos p on d.producto_id = p.producto_id
+	inner join ordenes o on d.orden_id = o.orden_id
+	inner join clientes c on o.cliente_id = c.cliente_id;
+
 // Muestra una lista con todos los productos vendidos, 
 incluyendo el nombre del cliente que los compró y la fecha de la compra.  
 
