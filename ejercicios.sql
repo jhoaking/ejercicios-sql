@@ -94,6 +94,34 @@ where o.total > 2
 group by  p.nombre,o.total
 order by CANTIDAD ASC ;
 
+Mostrar los clientes que han comprado todos los productos disponibles al menos una vez.
+
+
+select c.nombre,p.nombre,d.cantidad, p.stock from detalle_orden d 
+inner join productos p on d.producto_id = p.producto_id
+inner join ordenes o on d.orden_id = o.orden_id
+inner join clientes c on o.cliente_id = c.cliente_id
+where d.cantidad > 1;
+
+
+Listar los productos cuyo precio promedio de venta (en detalle_orden) sea mayor que el precio base registrado en productos.
+
+select p.nombre, p.stock,  p.precio ,AVG(d.precio) as precio_promedio from detalle_orden d 
+inner join productos p on d.producto_id = p.producto_id
+group by p.nombre, p.stock,  p.precio
+having  AVG(d.precio) > p.precio // podria generar errores a futuro si el precio es el mismo;
+order by p.nombre desc;
+
+ Obtener la lista de clientes que han hecho al menos una compra cada mes en el último año.
+
+  select c.nombre, p.nombre,o.fecha,d.cantidad,o.total from  detalle_orden d
+ inner join productos p on d.producto_id = p.producto_id
+ inner join ordenes o on d.orden_id = o.orden_id
+ inner join clientes c on o.cliente_id = c.cliente_id
+ where  d.cantidad > 1 and o.fecha >= '2025-03-01'
+ order by o.fecha desc ;
+
+ 
 
 --![x]/ TRANSACCIONES 
 
