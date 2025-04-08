@@ -51,3 +51,18 @@ Hacer una transacción que descuente stock al insertar una nueva orden.
 		update productos set stock = stock -1 where producto_id = 1;
 	select  row_count();
 	rollback;
+    commit;
+
+hacer una transaccion que  al acutalizar en productos muestre el estado que fie afectado
+	
+	start transaction
+	 	insert into productos(nombre,precio,stock) values ('jabon',20.2,64);
+		
+		select last_INSERT_ID();
+	
+		insert into productos(producto_id,nombre,precio,stock) values (1,'jabon',20.2,64);
+		
+		update productos set  stock = stock -3 where producto_id = 1;
+	rollback;
+	commit;
+
