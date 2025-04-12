@@ -66,3 +66,46 @@ hacer una transaccion que  al acutalizar en productos muestre el estado que fie 
 	rollback;
 	commit;
 
+Actualizar múltiples productos en una transacción.
+Cambia el stock de 2 productos y guarda solo si ambas actualizaciones funcionan.
+
+START TRANSACTION;
+
+UPDATE productos 
+SET stock = stock - 2 
+WHERE producto_id = 1;
+
+UPDATE productos 
+SET stock = stock - 1 
+WHERE producto_id = 2;
+
+COMMIT;
+
+
+Transacción con eliminación: Elimina una orden y si la eliminación de la orden no se realiza correctamente, haz un rollback.
+		
+START TRANSACTION;
+
+// esto se hace para eliminar las tablas que tienen relacon por llave forenea.
+
+DELETE FROM detalle_orden WHERE orden_id = 1;
+
+DELETE FROM ordenes WHERE orden_id = 1;
+
+
+UPDATE productos
+SET stock = stock + 1
+WHERE producto_id IN (SELECT producto_id FROM detalle_orden WHERE orden_id = 1);
+
+ROLLBACK;
+
+Inserta un nuevo cliente y una nueva orden (asociada a ese cliente) en una transacción. Si alguno de los insertos falla, realiza un rollback.
+
+START TRANSACTION;
+
+INSERT INTO clientes(nombre, email, direccion) VALUES (' pete', 'PETE@gmail.com', 'Av augenia  123');
+INSERT INTO ordenes(cliente_id, fecha, total) VALUES (LAST_INSERT_ID(),'2024-04-10',45.20);
+
+SELECT cliente_id, total FROM ordenes WHERE  cliente_id = LAST_INSERT_ID();
+
+ROLLBACK;
