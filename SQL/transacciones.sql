@@ -109,3 +109,18 @@ INSERT INTO ordenes(cliente_id, fecha, total) VALUES (LAST_INSERT_ID(),'2024-04-
 SELECT cliente_id, total FROM ordenes WHERE  cliente_id = LAST_INSERT_ID();
 
 ROLLBACK;
+
+
+Inserta un detalle de orden, pero antes de hacerlo ve  si el cliente existe y si el producto tiene suficiente stock. Si alguna condición no se cumple, realiza un rollback.
+
+
+START TRANSACTION; 
+
+
+SELECT cliente_id  FROM ordenes WHERE cliente_id = 2;
+SELECT * FROM ordenes WHERE orden_id = 2;
+SELECT stock FROM productos WHERE producto_id = 1;
+
+INSERT INTO detalle_orden(orden_id, producto_id, cantidad, precio) VALUES (2,1,20,40.2);
+
+ROLLBACK;
