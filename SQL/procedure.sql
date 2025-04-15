@@ -185,3 +185,69 @@ DELIMITER //
 
   END // 
 DELIMITER ;
+
+
+Crea un procedimiento almacenado que modifique el stock de un producto en función de una cantidad específica.
+
+DELIMITER // 
+	CREATE PROCEDURE sp_actualizar_stock(
+		IN i_producto_id INT,
+		IN i_cantidad INT ,
+		OUT o_salida VARCHAR(50)
+	)
+		BEGIN 
+			
+			START TRANSACTION;
+				UPDATE productos SET stock = i_cantidad WHERE producto_id = i_producto_id;
+		COMMIT;
+			SET o_salida = "se actualizo el producto";
+
+	END//
+DELIMITER ;
+
+
+
+Crea un procedimiento que reciba un cliente_id y devuelva todas las órdenes asociadas a ese cliente.
+
+DELIMITER //
+	CREATE PROCEDURE sp_ordenes_de_cliente(
+		IN i_cliente_id INT,
+		OUT o_salida VARCHAR(50)
+	)	
+		BEGIN 
+			 SELECT c.nombre , o.fecha, o.total FROM ordenes o 
+			 	 INNER JOIN clientes c ON o.cliente_id = c.cliente_id
+			 WHERE o.cliente_id = i_cliente_id;
+		
+			SET o_salida = 'Órdenes obtenidas exitosamente';
+
+	END//
+DELIMITER ;
+
+
+Crea un procedimiento almacenado que permita transferir una cantidad de stock de un producto a otro.
+
+DELIMITER //
+	CREATE PROCEDURE sp_transferir_stock (
+		IN i_producto_actual_id INT,
+		IN i_producto_llegada_id INT,
+		IN i_cantidad INT,
+		OUT o_salida VARCHAR(50)
+	)
+		BEGIN 
+			DECLARE v_stock_actual INT DEFAULT 0;
+			START TRANSACTION;
+				SELECT stock INTO v_stock_actual FROM productos WHERE producto_id = i_producto_actual_id;
+			IF v_stock_actual < i_cantidad THEN
+			ROLLBACK;
+			SET o_salida = 'No hay suficiente stock para transferir';
+		ELSE
+		UPDATE productos SET stock = stock - i_cantidad WHERE producto_id = i_producto_actual_id;
+
+		UPDATE productos SET stock = stock + i_cantidad WHERE producto_id = i_producto_llegada_id;
+
+		COMMIT;
+			SET o_salida = 'Stock transferido con éxito';
+		END IF;
+	END//
+DELIMITER ;
