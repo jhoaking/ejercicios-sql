@@ -36,3 +36,68 @@ BEGIN
 
 END //
 DELIMITER ;
+
+
+
+Procedimiento para actualizar precio de producto: 
+Crea un procedimiento almacenado que actualice el precio de un producto dado su producto_id.
+
+
+DELIMITER //
+
+CREATE PROCEDURE sp_actualizar_producto(
+  IN i_producto_id INT,
+  IN i_nuevo_precio DECIMAL(10,2),
+  OUT o_salida VARCHAR(50)
+)
+	BEGIN
+  		START TRANSACTION;
+
+		  UPDATE productos
+		  SET precio = i_nuevo_precio
+		  WHERE producto_id = i_producto_id;
+
+  	COMMIT;
+
+  	SET o_salida = 'Producto actualizado correctamente';
+  	
+	END //
+
+DELIMITER ;
+
+
+
+ Crea un procedimiento almacenado que inserte un nuevo cliente, incluyendo validaciones para verificar si el email ya existe.
+
+DELIMITER // 
+	
+	CREATE PROCEDURE sp_insertar_cliente(
+	IN i_nombre VARCHAR(30),
+	IN i_email VARCHAR(50) ,
+	IN i_direccion VARCHAR(30),
+	OUT o_salida VARCHAR(30)
+	)
+		BEGIN
+			DECLARE existe_email INT DEFAULT 0; 
+	
+			START TRANSACTION;
+			
+			SELECT COUNT(*) INTO existe_email FROM clientes WHERE email = i_email;
+			
+				IF existe_email != 0 THEN 
+					SET o_salida = "ya existe ese correo";
+				ROLLBACK;
+				ELSE
+				
+				INSERT INTO clientes(nombre,email,direccion) VALUES(i_nombre,i_email,i_direccion);
+					SET  o_salida = "se agrego el cliente";
+				
+				END IF;
+ 	COMMIT;
+
+ END;
+
+DELIMITER ;
+
+CALL sp_insertar_cliente('pepe', 'pepe@gmail.com', 'Av siempre viva', @mensaje);
+SELECT @mensaje;
