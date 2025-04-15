@@ -101,3 +101,87 @@ DELIMITER ;
 
 CALL sp_insertar_cliente('pepe', 'pepe@gmail.com', 'Av siempre viva', @mensaje);
 SELECT @mensaje;
+
+
+
+Crea un procedimiento almacenado que elimine una orden y todos los detalles asociados a esa orden.
+
+DELIMITER // 
+	CREATE PROCEDURE sp_eliminar_orden(
+		IN i_orden_id INT,
+		OUT o_salida VARCHAR(30)
+	) 
+	 BEGIN 
+		 DECLARE v_existe_orden INT DEFAULT 0;
+
+		 START TRANSACTION;
+		 
+			SELECT COUNT(*) INTO v_existe_orden FROM ordenes WHERE orden_id = i_orden_id;
+			
+		    IF v_existe_orden != 0 THEN
+		    	SET o_salida = "no hay ninguna orden";
+		  ROLLBACK;
+		  ELSE 
+		  
+		   DELETE FROM detalle_orden WHERE orden_id = i_orden_id;
+		   DELETE FROM  ordenes WHERE orden_id = i_orden_id;
+		
+		 
+		 	SET o_salida = "se elimino con exito la orden";
+		 	
+		 	END IF;
+		 COMMIT;
+
+	END//
+DELIMITER ;
+
+CALL sp_eliminar_orden(10, @mensaje);
+SELECT @mensaje;
+
+
+Crea un procedimiento que registre una compra de productos, actualizando el stock y creando una nueva orden.
+
+DELIMITER // 
+	CREATE PROCEDURE sp_registrar_y_cambiar_producto(
+		IN i_nombre VARCHAR(30),
+		IN i_precio DECIMAL (10,2),
+		IN i_stock INT,
+		IN i_cliente_id INT,
+		OUT o_salida VARCHAR(50)
+	)
+		BEGIN 
+			 DECLARE v_producto_id INT DEFAULT 0;
+			 DECLARE v_orden_id INT DEFAULT 0;
+			 
+			START TRANSACTION 
+			 INSERT INTO productos(nombre,precio,stock) VALUES (i_nombre, i_precio, i_stock);
+			 	SET v_producto_id = LAST_INSERT_ID();
+			 	
+			INSERT INTO ordenes(cliente_id , fecha,total) VALUES(i_cliente_id , CURDATE(), i_precio * i_stock);
+			 	SET v_orden_id = LAST_INSERT_ID();
+			
+			INSERT INTO detalle_orden(orden_id,producto_id,cantidad,precio) VALUES(v_orden_id,v_producto_id, i_stock, i_precio);
+			
+		 COMMIT;
+		 SET o_salida = "se registro y actualizo con exito";
+
+	END //
+DELIMITER ;
+
+CALL sp_registrar_y_cambiar_producto('Harina', 5.20, 4, 2, @res);
+SELECT @res;
+
+
+Crea un procedimiento almacenado que devuelva todos los detalles de una orden dada su orden_id.
+
+DELIMITER // 
+	CREATE PROCEDURE sp_devolver_orden(
+		IN i_orden_id INT,
+		OUT o_salida VARCHAR(50)
+	)
+		BEGIN 
+				SELECT * FROM detalle_orden WHERE orden_id = i_orden_id;
+				SET o_salida = "mostrando orden";
+
+  END // 
+DELIMITER ;
